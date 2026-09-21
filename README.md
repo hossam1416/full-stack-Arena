@@ -4,7 +4,7 @@ Arena is a full-stack esports platform. Players create teams, join tournaments a
 
 This is my second full-stack project. I built it to practice a bigger backend (roles, business rules, bracket logic) together with a complete admin panel.
 
-**Live demo:** [add link here]
+**Live demo:** [https://full-stack-arena.vercel.app]
 
 **Demo accounts**
 
