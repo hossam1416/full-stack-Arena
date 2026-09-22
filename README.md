@@ -181,10 +181,11 @@ There is no admin sign up. Register a normal account, then open the `users` coll
 
 ## What I would add next
 
-- Image upload. Right now logos and banners are added by URL.
-- Live notifications. They are refreshed every minute.
-- Password reset by email.
-- Automated tests. The bracket helpers would be the first ones.
+- [ ] Player leaderboard with individual rankings, wins, losses, and tournament performance.
+- [ ] Online payment integration for tournaments with entry fees.
+- [ ] Detailed player profiles with tournament history, statistics, and achievements.
+- [ ] Real-time match updates using WebSockets.
+- [ ] Advanced admin analytics for registrations, matches, and tournament performance.
 
 ## Author
 
