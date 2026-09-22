@@ -152,6 +152,14 @@ export default function AdminTournamentsPage() {
                       <Button
                         size="small"
                         variant="outlined"
+                        component={Link}
+                        href={`/admin/tournaments/${tournament._id}/matches`}
+                      >
+                        Matches
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="outlined"
                         color="warning"
                         onClick={() => handleEditClick(tournament._id)}
                       >

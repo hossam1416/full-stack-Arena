@@ -157,9 +157,15 @@ export const getUpcomingMatches = async (req, res) => {
     const teamIds = teams.map((team) => team._id);
 
     const matches = await Match.find({
-      $or: [{ teamA: { $in: teamIds } }, { teamB: { $in: teamIds } }],
-      status: "scheduled",
-      scheduledAt: { $gte: new Date() },
+      $and: [
+        {
+          $or: [{ teamA: { $in: teamIds } }, { teamB: { $in: teamIds } }],
+        },
+        { status: "scheduled" },
+        {
+          $or: [{ scheduledAt: { $gte: new Date() } }, { scheduledAt: null }],
+        },
+      ],
     })
       .populate("teamA", "name logo")
       .populate("teamB", "name logo")
