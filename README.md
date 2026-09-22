@@ -23,15 +23,15 @@ This is my second full-stack project. I built it to practice a bigger backend (r
 
 | Landing page | Player dashboard |
 | --- | --- |
-| ![Landing page](https://github.com/user-attachments/assets/0f5ba8fc-4773-4748-8b20-4ae82be3e4f2) | ![Player dashboard](https://github.com/user-attachments/assets/89a2af70-2f27-47bd-a876-86530a073a28) |
+| ![Landing page](https://github.com/user-attachments/assets/0f5ba8fc-4773-4748-8b20-4ae82be3e4f2) | ![Player dashboard](https://github.com/user-attachments/assets/2ab3ec97-8d8d-41eb-aa73-5e7d38973bde) |
 
 | Team page | Tournament page |
 | --- | --- |
-| ![Team page](https://github.com/user-attachments/assets/d0558d0f-9676-4bf1-bc75-ae5f609f8b69) | ![Tournament page](https://github.com/user-attachments/assets/ad591f3d-f8ce-4a26-90f4-ef58eeb38266) |
+| ![Team page](https://github.com/user-attachments/assets/f1738c4f-b66b-40c5-8dc8-ee3028fb6d18) | ![Tournament page](https://github.com/user-attachments/assets/37967a66-291a-4ef8-9493-3e53882bde1b) |
 
 | Bracket | Admin panel |
 | --- | --- |
-| ![Bracket](https://github.com/user-attachments/assets/5c3f8ff8-fda7-4b08-bc89-c77ae72e1340) | ![Admin panel](https://github.com/user-attachments/assets/30eec5dc-12fa-4e17-9335-7834fea82ddb) |
+| ![Bracket](https://github.com/user-attachments/assets/e4a7e512-62f3-438b-86c9-7a8ac4810ec0) | ![Admin panel](https://github.com/user-attachments/assets/956780cb-af17-448a-8edc-39b1c95fbdff) |
 
 
 ## Features
