@@ -15,7 +15,7 @@ This is my second full-stack project. I built it to practice a bigger backend (r
 | Player | test3@arena.com | 333333   |
                  .             .
                  .             .
-| Player | test9@arena.com | 999999   |
+| Player | test8@arena.com | 888888   |
 
 | Admin  |hossam@gmail.com | 111111   |
 
