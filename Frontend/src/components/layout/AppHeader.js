@@ -28,6 +28,9 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import CampaignIcon from "@mui/icons-material/Campaign";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import { useThemeMode } from "@/context/ThemeContext";
 
 const navItems = [
   { label: "Home", href: "/dashboard", icon: HomeIcon },
@@ -40,6 +43,7 @@ const navItems = [
 export default function AppHeader() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { mode, toggleMode } = useThemeMode();
 
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -245,6 +249,26 @@ export default function AppHeader() {
                 >
                   <NotificationsNoneIcon sx={{ fontSize: "1.5rem" }} />
                 </Badge>
+              </IconButton>
+
+              <IconButton
+                onClick={toggleMode}
+                aria-label="Toggle color mode"
+                title={
+                  mode === "dark"
+                    ? "Switch to Light Mode"
+                    : "Switch to Dark Mode"
+                }
+                sx={{
+                  ml: 0.5,
+                  color: "text.secondary",
+                  "&:hover": {
+                    color: "primary.main",
+                    backgroundColor: "action.hover",
+                  },
+                }}
+              >
+                {mode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
               </IconButton>
 
               <IconButton

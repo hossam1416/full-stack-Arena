@@ -10,6 +10,7 @@ import {
   IconButton,
   Divider,
 } from "@mui/material";
+
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import YouTubeIcon from "@mui/icons-material/YouTube";
@@ -57,9 +58,10 @@ const linkSx = {
   fontSize: "0.8rem",
   transition: "color 0.2s ease",
   "&:hover": {
-    color: "text.primary",
+    color: "primary.main",
   },
 };
+
 export default function Footer() {
   const pathname = usePathname();
 
@@ -72,7 +74,8 @@ export default function Footer() {
       component="footer"
       sx={{
         backgroundColor: "background.paper",
-        borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+        borderTop: 1,
+        borderColor: "divider",
         pt: 4,
         pb: 2.5,
         px: 3,
@@ -95,7 +98,7 @@ export default function Footer() {
                   width: 32,
                   height: 32,
                   borderRadius: 1.2,
-                  backgroundColor: "rgba(220, 38, 38, 0.15)",
+                  backgroundColor: "action.selected",
                   color: "primary.main",
                   display: "flex",
                   alignItems: "center",
@@ -143,12 +146,13 @@ export default function Footer() {
                     sx={{
                       p: 0.6,
                       color: "text.secondary",
-                      backgroundColor: "rgba(255, 255, 255, 0.03)",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      backgroundColor: "action.hover",
+                      border: 1,
+                      borderColor: "divider",
                       "&:hover": {
                         color: "primary.main",
                         borderColor: "primary.main",
-                        backgroundColor: "rgba(220, 38, 38, 0.1)",
+                        backgroundColor: "action.selected",
                       },
                     }}
                   >
@@ -207,12 +211,7 @@ export default function Footer() {
           </Grid>
         </Grid>
 
-        <Divider
-          sx={{
-            my: 2.5,
-            borderColor: "rgba(255, 255, 255, 0.06)",
-          }}
-        />
+        <Divider sx={{ my: 2.5, borderColor: "divider" }} />
 
         <Box
           sx={{

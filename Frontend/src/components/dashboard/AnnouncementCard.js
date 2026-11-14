@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import Link from "next/link";
+import { formatDate } from "@/lib/formatDate";
 
 export default function AnnouncementCard({ announcement }) {
   return (
@@ -8,28 +9,29 @@ export default function AnnouncementCard({ announcement }) {
       href={`/announcements/${announcement._id}`}
       sx={{
         position: "relative",
+        display: "block",
         height: 320,
         overflow: "hidden",
-        borderRadius: 2.5,
-        cursor: "pointer",
+        borderRadius: 2,
+        border: 1,
+        borderColor: "divider",
         textDecoration: "none",
         color: "inherit",
-        display: "block",
+        cursor: "pointer",
         backgroundColor: "background.paper",
         backgroundImage: announcement.image
           ? `url(${announcement.image})`
           : "linear-gradient(135deg, #1A1616 0%, #0C0A0A 100%)",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        border: "1px solid rgba(156, 163, 175, 0.12)",
-        transition: "0.2s ease",
+        transition: "all 0.2s ease",
         "&:hover": {
-          borderColor: "rgba(220, 38, 38, 0.35)",
+          borderColor: "primary.main",
           transform: "translateY(-3px)",
-          boxShadow: "0 0 25px rgba(220, 38, 38, 0.12)",
         },
       }}
     >
+      {/* Overlay */}
       <Box
         sx={{
           position: "absolute",
@@ -51,13 +53,11 @@ export default function AnnouncementCard({ announcement }) {
         }}
       >
         <Typography
+          variant="h6"
+          fontWeight={900}
+          lineHeight={1.25}
           sx={{
-            fontSize: {
-              xs: "1.25rem",
-              sm: "1.4rem",
-            },
-            fontWeight: 900,
-            lineHeight: 1.25,
+            fontSize: { xs: "1.25rem", sm: "1.4rem" },
             color: "#fff",
           }}
         >
@@ -65,9 +65,9 @@ export default function AnnouncementCard({ announcement }) {
         </Typography>
 
         <Typography
+          variant="body2"
           sx={{
             mt: 1,
-            fontSize: "0.85rem",
             lineHeight: 1.6,
             color: "rgba(255,255,255,0.75)",
             display: "-webkit-box",
@@ -80,13 +80,13 @@ export default function AnnouncementCard({ announcement }) {
         </Typography>
 
         <Typography
+          variant="caption"
           sx={{
             mt: 1.5,
-            fontSize: "0.7rem",
             color: "rgba(255,255,255,0.55)",
           }}
         >
-          {new Date(announcement.createdAt).toLocaleDateString()}
+          {formatDate(announcement.createdAt)}
         </Typography>
       </Box>
     </Box>

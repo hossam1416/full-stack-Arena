@@ -4,14 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
-  Alert,
   Avatar,
   Box,
   Button,
+  Card,
   Chip,
-  CircularProgress,
   Grid,
-  Paper,
+  Stack,
   Typography,
 } from "@mui/material";
 import { apiRequest } from "@/lib/api";
@@ -21,37 +20,24 @@ import {
   getRegistrationState,
   STATUS_COLORS,
 } from "@/lib/tournamentHelpers";
+import { formatDate } from "@/lib/formatDate";
+import PageContainer from "@/components/layout/PageContainer";
+import Banner from "@/components/common/Banner";
+import InfoItem from "@/components/common/InfoItem";
+import ActionRow from "@/components/common/ActionRow";
+import { LoadingState, MessageState } from "@/components/common/PageState";
 
-const formatDate = (date) => new Date(date).toLocaleDateString();
-// A card with a title and a short text on the left, and a button on the right
-function ActionCard({ title, text, children }) {
+// title and a short text on the left, a button on the right
+function ActionCard({ title, text, button }) {
   return (
-    <Paper
-      sx={{
-        mt: 3,
-        p: { xs: 3, md: 4 },
-        border: "1px solid",
-        borderColor: "divider",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: { xs: "flex-start", md: "center" },
-          flexDirection: { xs: "column", md: "row" },
-          gap: 3,
-        }}
-      >
-        <Box>
-          <Typography variant="h5" fontWeight={800} mb={1}>
-            {title}
-          </Typography>
-          <Typography color="text.secondary">{text}</Typography>
-        </Box>
-        {children}
+    <ActionRow sx={{ p: { xs: 3, md: 4 } }} actions={button}>
+      <Box>
+        <Typography variant="h5" gutterBottom>
+          {title}
+        </Typography>
+        <Typography color="text.secondary">{text}</Typography>
       </Box>
-    </Paper>
+    </ActionRow>
   );
 }
 
@@ -63,6 +49,7 @@ export default function TournamentDetailsPage() {
 
   useEffect(() => {
     if (!id) return;
+
     const loadTournament = async () => {
       try {
         const data = await apiRequest(`/tournaments/${id}`);
@@ -73,29 +60,23 @@ export default function TournamentDetailsPage() {
         setLoading(false);
       }
     };
+
     loadTournament();
   }, [id]);
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          minHeight: "60vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <CircularProgress color="primary" />
-      </Box>
+      <PageContainer maxWidth="lg">
+        <LoadingState />
+      </PageContainer>
     );
   }
 
   if (error || !tournament) {
     return (
-      <Box sx={{ maxWidth: 1400, mx: "auto", px: 4, py: 5 }}>
-        <Alert severity="error">{error || "Tournament not found"}</Alert>
-      </Box>
+      <PageContainer maxWidth="lg">
+        <MessageState error text={error || "Tournament not found"} />
+      </PageContainer>
     );
   }
 
@@ -127,214 +108,168 @@ export default function TournamentDetailsPage() {
   ];
 
   return (
-    <Box sx={{ maxWidth: 1100, mx: "auto", px: { xs: 2, md: 4 }, py: 5 }}>
-      {/* hero: banner, status, name, description */}
-      <Paper
-        sx={{ overflow: "hidden", border: "1px solid", borderColor: "divider" }}
-      >
-        <Box
-          sx={{
-            height: { xs: 140, md: 220 },
-            backgroundColor: "background.default",
-            backgroundImage: tournament.banner
-              ? `url(${tournament.banner})`
-              : "linear-gradient(135deg, #1A1616 0%, #0C0A0A 100%)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
+    <PageContainer maxWidth="lg">
+      <Stack spacing={3}>
+        {/* hero: banner, status, name, description */}
+        <Card>
+          <Banner src={tournament.banner} height={{ xs: 140, md: 220 }} />
 
-        <Box sx={{ p: { xs: 3, md: 4 } }}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1.5,
-              flexWrap: "wrap",
-              mb: 2,
-            }}
-          >
-            <Chip
-              label={formatStatus(tournament.status)}
-              color={STATUS_COLORS[tournament.status] || "default"}
-              size="small"
-            />
-            <Typography color="text.secondary">
-              {tournament.game?.name} • {tournament.format}
+          <Box sx={{ p: { xs: 3, md: 4 } }}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={1.5}
+              useFlexGap
+              flexWrap="wrap"
+              sx={{ mb: 2 }}
+            >
+              <Chip
+                label={formatStatus(tournament.status)}
+                color={STATUS_COLORS[tournament.status] || "default"}
+                size="small"
+              />
+              <Typography color="text.secondary">
+                {tournament.game?.name} • {tournament.format}
+              </Typography>
+            </Stack>
+
+            <Typography
+              variant="h3"
+              gutterBottom
+              sx={{ fontSize: { xs: "1.8rem", md: "2.4rem" } }}
+            >
+              {tournament.name}
+            </Typography>
+
+            <Typography color="text.secondary" sx={{ maxWidth: 800 }}>
+              {tournament.description || "No description available."}
             </Typography>
           </Box>
+        </Card>
 
-          <Typography
-            variant="h2"
-            sx={{
-              fontWeight: 900,
-              mb: 2,
-              fontSize: { xs: "1.8rem", md: "2.4rem" },
-            }}
-          >
-            {tournament.name}
-          </Typography>
+        {/* numbers */}
+        <Grid container spacing={3}>
+          {statCards.map((card) => (
+            <Grid key={card.label} size={{ xs: 12, sm: 6, md: 3 }}>
+              <Card sx={{ p: 3, height: "100%" }}>
+                <Typography variant="body2" color="text.secondary">
+                  {card.label}
+                </Typography>
+                <Typography variant="h6" sx={{ mt: 1 }}>
+                  {card.value}
+                </Typography>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
 
-          <Typography
-            color="text.secondary"
-            sx={{ maxWidth: 800, lineHeight: 1.8 }}
-          >
-            {tournament.description || "No description available."}
-          </Typography>
-        </Box>
-      </Paper>
-
-      {/* numbers */}
-      <Grid container spacing={3} sx={{ mt: 3 }}>
-        {statCards.map((card) => (
-          <Grid key={card.label} size={{ xs: 12, sm: 6, md: 3 }}>
-            <Paper sx={{ p: 3, height: "100%" }}>
-              <Typography variant="body2" color="text.secondary">
-                {card.label}
-              </Typography>
-              <Typography variant="h6" fontWeight={800} sx={{ mt: 1 }}>
-                {card.value}
-              </Typography>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
-
-      {/* register */}
-      <ActionCard
-        title="Join the Tournament"
-        text="Register your team and compete in this tournament."
-      >
-        <Button
-          component={Link}
-          href={`/tournaments/${tournament._id}/register`}
-          variant="contained"
-          size="large"
-          disabled={!registration.open}
-          sx={{ minWidth: 180, fontWeight: 800 }}
-        >
-          {registration.label}
-        </Button>
-      </ActionCard>
-
-      {/* matches */}
-      {hasBracket && (
+        {/* register */}
         <ActionCard
-          title="Matches & Bracket"
-          text="View tournament matches, results, and the competition bracket."
-        >
-          <Button
-            component={Link}
-            href={`/tournaments/${tournament._id}/matches`}
-            variant="outlined"
-            size="large"
-            sx={{ minWidth: 180, fontWeight: 800 }}
-          >
-            View Matches
-          </Button>
-        </ActionCard>
-      )}
-
-      {/* rules + info */}
-      <Grid container spacing={3} sx={{ mt: 3 }}>
-        <Grid size={{ xs: 12, md: 8 }}>
-          <Paper
-            sx={{
-              p: { xs: 3, md: 4 },
-              height: "100%",
-              border: "1px solid",
-              borderColor: "divider",
-            }}
-          >
-            <Typography variant="h5" fontWeight={800} mb={2}>
-              Tournament Rules
-            </Typography>
-            <Typography
-              color="text.secondary"
-              sx={{ lineHeight: 1.9, whiteSpace: "pre-line" }}
+          title="Join the Tournament"
+          text="Register your team and compete in this tournament."
+          button={
+            <Button
+              component={Link}
+              href={`/tournaments/${tournament._id}/register`}
+              variant="contained"
+              size="large"
+              disabled={!registration.open}
+              sx={{ minWidth: 180 }}
             >
-              {tournament.rules || "No specific rules have been provided."}
-            </Typography>
-          </Paper>
-        </Grid>
+              {registration.label}
+            </Button>
+          }
+        />
 
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Paper
-            sx={{
-              p: { xs: 3, md: 4 },
-              height: "100%",
-              border: "1px solid",
-              borderColor: "divider",
-            }}
-          >
-            <Typography variant="h5" fontWeight={800} mb={3}>
-              Tournament Info
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {infoItems.map((item) => (
-                <Box key={item.label}>
-                  <Typography variant="body2" color="text.secondary">
-                    {item.label}
-                  </Typography>
-                  <Typography fontWeight={700}>{item.value}</Typography>
-                </Box>
-              ))}
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
-
-      {/* registered teams */}
-      <Paper
-        sx={{
-          mt: 3,
-          p: { xs: 3, md: 4 },
-          border: "1px solid",
-          borderColor: "divider",
-        }}
-      >
-        <Typography variant="h5" fontWeight={800}>
-          Registered Teams
-        </Typography>
-        <Typography color="text.secondary" sx={{ mt: 0.5, mb: 3 }}>
-          {tournament.registrationCount} of {tournament.maxTeams} teams
-          registered
-        </Typography>
-
-        {!tournament.registrations?.length ? (
-          <Typography color="text.secondary">
-            No teams have registered for this tournament yet.
-          </Typography>
-        ) : (
-          <Grid container spacing={2}>
-            {tournament.registrations.map((registration) => (
-              <Grid key={registration._id} size={{ xs: 12, sm: 6, md: 4 }}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 2,
-                    border: "1px solid",
-                    borderColor: "divider",
-                  }}
-                >
-                  <Avatar
-                    src={registration.team?.logo || undefined}
-                    alt={registration.team?.name}
-                    sx={{ width: 52, height: 52 }}
-                  >
-                    {registration.team?.name?.charAt(0).toUpperCase()}
-                  </Avatar>
-                  <Typography fontWeight={800} noWrap>
-                    {registration.team?.name || "Unknown Team"}
-                  </Typography>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
+        {/* matches */}
+        {hasBracket && (
+          <ActionCard
+            title="Matches & Bracket"
+            text="View tournament matches, results, and the competition bracket."
+            button={
+              <Button
+                component={Link}
+                href={`/tournaments/${tournament._id}/matches`}
+                variant="outlined"
+                size="large"
+                sx={{ minWidth: 180 }}
+              >
+                View Matches
+              </Button>
+            }
+          />
         )}
-      </Paper>
-    </Box>
+
+        {/* rules + info */}
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 8 }}>
+            <Card sx={{ p: { xs: 3, md: 4 }, height: "100%" }}>
+              <Typography variant="h5" gutterBottom>
+                Tournament Rules
+              </Typography>
+              <Typography
+                color="text.secondary"
+                sx={{ whiteSpace: "pre-line" }}
+              >
+                {tournament.rules || "No specific rules have been provided."}
+              </Typography>
+            </Card>
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Card sx={{ p: { xs: 3, md: 4 }, height: "100%" }}>
+              <Typography variant="h5" sx={{ mb: 3 }}>
+                Tournament Info
+              </Typography>
+              <Stack spacing={2}>
+                {infoItems.map((item) => (
+                  <InfoItem
+                    key={item.label}
+                    label={item.label}
+                    value={item.value}
+                  />
+                ))}
+              </Stack>
+            </Card>
+          </Grid>
+        </Grid>
+
+        {/* registered teams */}
+        <Card sx={{ p: { xs: 3, md: 4 } }}>
+          <Typography variant="h5">Registered Teams</Typography>
+          <Typography color="text.secondary" sx={{ mt: 0.5, mb: 3 }}>
+            {tournament.registrationCount} of {tournament.maxTeams} teams
+            registered
+          </Typography>
+
+          {!tournament.registrations?.length ? (
+            <Typography color="text.secondary">
+              No teams have registered for this tournament yet.
+            </Typography>
+          ) : (
+            <Grid container spacing={2}>
+              {tournament.registrations.map((entry) => (
+                <Grid key={entry._id} size={{ xs: 12, sm: 6, md: 4 }}>
+                  <Card
+                    sx={{ p: 2, display: "flex", alignItems: "center", gap: 2 }}
+                  >
+                    <Avatar
+                      src={entry.team?.logo || undefined}
+                      alt={entry.team?.name}
+                      sx={{ width: 52, height: 52 }}
+                    >
+                      {entry.team?.name?.charAt(0).toUpperCase()}
+                    </Avatar>
+                    <Typography noWrap sx={{ fontWeight: 800 }}>
+                      {entry.team?.name || "Unknown Team"}
+                    </Typography>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </Card>
+      </Stack>
+    </PageContainer>
   );
 }

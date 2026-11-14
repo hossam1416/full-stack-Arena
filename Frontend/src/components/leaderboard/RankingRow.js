@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { Avatar, Box, Typography } from "@mui/material";
 
-// Column sizes on desktop. The page uses the same value for the table header.
+// Shared column layout for the ranking header and rows
 export const RANKING_COLUMNS = "60px 1fr repeat(4, 90px)";
 
-export default function RankingRow({ entry, rank, isLast }) {
-  // wins, losses and win rate are hidden on small screens
-  const columns = [entry.wins, entry.losses, `${entry.winRate.toFixed(1)}%`];
+export default function RankingRow({ entry, rank }) {
+  const stats = [
+    { label: "Wins", value: entry.wins },
+    { label: "Losses", value: entry.losses },
+    { label: "Win Rate", value: `${entry.winRate.toFixed(1)}%` },
+  ];
 
   return (
     <Box
@@ -21,17 +24,19 @@ export default function RankingRow({ entry, rank, isLast }) {
         py: 2,
         textDecoration: "none",
         color: "inherit",
-        borderBottom: isLast ? "none" : "1px solid",
-        borderColor: "divider",
         transition: "background-color 0.2s",
+        "&:not(:last-child)": {
+          borderBottom: "1px solid",
+          borderColor: "divider",
+        },
         "&:hover": { backgroundColor: "action.hover" },
       }}
     >
-      <Typography sx={{ fontWeight: 800, color: "text.secondary" }}>
+      <Typography color="text.secondary" sx={{ fontWeight: 800 }}>
         #{rank}
       </Typography>
 
-      {/* team */}
+      {/* Team */}
       <Box
         sx={{ display: "flex", alignItems: "center", gap: 1.5, minWidth: 0 }}
       >
@@ -48,30 +53,27 @@ export default function RankingRow({ entry, rank, isLast }) {
         </Typography>
       </Box>
 
-      {/* points */}
+      {/* Points */}
       <Box sx={{ textAlign: "center" }}>
         <Typography sx={{ fontWeight: 800 }}>{entry.points}</Typography>
+
         <Typography
-          sx={{
-            display: { xs: "block", sm: "none" },
-            fontSize: "0.65rem",
-            color: "text.secondary",
-          }}
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: { xs: "block", sm: "none" } }}
         >
           Points
         </Typography>
       </Box>
 
-      {columns.map((value, index) => (
+      {/* Additional statistics - desktop only */}
+      {stats.map((stat) => (
         <Typography
-          key={index}
-          sx={{
-            display: { xs: "none", sm: "block" },
-            textAlign: "center",
-            fontWeight: 700,
-          }}
+          key={stat.label}
+          align="center"
+          sx={{ display: { xs: "none", sm: "block" }, fontWeight: 700 }}
         >
-          {value}
+          {stat.value}
         </Typography>
       ))}
     </Box>

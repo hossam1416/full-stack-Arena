@@ -10,13 +10,7 @@ export default function SectionTitle({ title }) {
         mb: 2,
       }}
     >
-      <Typography
-        sx={{
-          fontSize: "1rem",
-          fontWeight: 900,
-          letterSpacing: "0.05em",
-        }}
-      >
+      <Typography variant="subtitle1" fontWeight={900} letterSpacing="0.05em">
         {title}
       </Typography>
 
@@ -24,7 +18,7 @@ export default function SectionTitle({ title }) {
         sx={{
           width: 40,
           height: 2,
-          backgroundColor: "primary.main",
+          bgcolor: "primary.main",
         }}
       />
     </Box>

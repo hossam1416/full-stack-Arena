@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Alert, Box, Grid, Typography } from "@mui/material";
+import { Alert, Grid, Typography } from "@mui/material";
 import { apiRequest } from "@/lib/api";
 import AnnouncementCard from "@/components/dashboard/AnnouncementCard";
+import PageContainer from "@/components/layout/PageContainer";
 
 export default function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState([]);
@@ -28,38 +29,19 @@ export default function AnnouncementsPage() {
 
   if (loading) {
     return (
-      <Box sx={{ p: 4 }}>
-        <Typography>Loading announcements...</Typography>
-      </Box>
+      <PageContainer>
+        <Typography color="text.secondary">Loading announcements...</Typography>
+      </PageContainer>
     );
   }
 
   return (
-    <Box
-      sx={{
-        maxWidth: 1200,
-        mx: "auto",
-        px: { xs: 2, md: 3 },
-        py: { xs: 3, md: 5 },
-      }}
-    >
-      <Typography
-        sx={{
-          fontSize: { xs: "1.8rem", md: "2.3rem" },
-          fontWeight: 900,
-          mb: 1,
-        }}
-      >
+    <PageContainer>
+      <Typography variant="h4" sx={{ mb: 1 }}>
         Announcements
       </Typography>
 
-      <Typography
-        color="text.secondary"
-        sx={{
-          mb: 4,
-          fontSize: "0.9rem",
-        }}
-      >
+      <Typography color="text.secondary" sx={{ mb: 4 }}>
         Stay up to date with the latest Arena news and updates.
       </Typography>
 
@@ -82,6 +64,6 @@ export default function AnnouncementsPage() {
           ))}
         </Grid>
       )}
-    </Box>
+    </PageContainer>
   );
 }

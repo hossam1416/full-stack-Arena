@@ -1,16 +1,7 @@
-"use client";
-
 import { useState } from "react";
-import {
-  Alert,
-  Box,
-  Button,
-  Paper,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Button, Card, Stack, Typography } from "@mui/material";
 import { apiRequest } from "@/lib/api";
+import TeamFormFields from "@/components/teams/TeamFormFields";
 
 // The form keeps its own state, so the page reloading (accept a request, remove a member)
 // does not erase what the captain is typing.
@@ -60,22 +51,9 @@ export default function TeamSettingsForm({ team, onSaved }) {
   };
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: { xs: 3, md: 4 },
-        mb: 4,
-        border: "1px solid rgba(156, 163, 175, 0.12)",
-        borderRadius: 3,
-      }}
-    >
-      <Typography
-        variant="h6"
-        sx={{ fontWeight: 900, letterSpacing: "0.04em" }}
-      >
-        TEAM SETTINGS
-      </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3, fontSize: "0.9rem" }}>
+    <Card sx={{ p: { xs: 3, md: 4 }, mb: 4 }}>
+      <Typography variant="h6">TEAM SETTINGS</Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         Update your team information and appearance.
       </Typography>
 
@@ -87,52 +65,18 @@ export default function TeamSettingsForm({ team, onSaved }) {
 
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={3}>
-          <TextField
-            label="Team Name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            fullWidth
-            required
-          />
-          <TextField
-            label="Team Description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            multiline
-            minRows={4}
-            inputProps={{ maxLength: 300 }}
-            helperText={`${formData.description.length}/300`}
-            fullWidth
-          />
-          <TextField
-            label="Team Logo URL"
-            name="logo"
-            value={formData.logo}
-            onChange={handleChange}
-            placeholder="https://example.com/team-logo.png"
-            fullWidth
-          />
-          <TextField
-            label="Team Banner URL"
-            name="banner"
-            value={formData.banner}
-            onChange={handleChange}
-            placeholder="https://example.com/team-banner.jpg"
-            fullWidth
-          />
+          <TeamFormFields formData={formData} onChange={handleChange} />
 
           <Button
             type="submit"
             variant="contained"
             disabled={saving}
-            sx={{ alignSelf: { xs: "stretch", sm: "flex-start" }, px: 3 }}
+            sx={{ alignSelf: { xs: "stretch", sm: "flex-start" } }}
           >
             {saving ? "SAVING..." : "SAVE CHANGES"}
           </Button>
         </Stack>
       </Box>
-    </Paper>
+    </Card>
   );
 }

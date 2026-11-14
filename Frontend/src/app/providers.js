@@ -1,18 +1,16 @@
 "use client";
 
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import theme from "../theme/theme";
+
 import { AuthProvider } from "../context/AuthContext";
+import { ThemeContextProvider } from "../context/ThemeContext";
 
 export default function Providers({ children }) {
   return (
     <AppRouterCacheProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
+      <ThemeContextProvider>
         <AuthProvider>{children}</AuthProvider>
-      </ThemeProvider>
+      </ThemeContextProvider>
     </AppRouterCacheProvider>
   );
 }

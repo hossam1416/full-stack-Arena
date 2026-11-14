@@ -1,6 +1,8 @@
 import { Box, Stack, Typography } from "@mui/material";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import Link from "next/link";
+import { formatDateTime } from "@/lib/formatDate";
+
 export default function UpcomingMatchCard({ match }) {
   return (
     <Box
@@ -12,14 +14,15 @@ export default function UpcomingMatchCard({ match }) {
         color: "inherit",
         p: 2.25,
         backgroundColor: "background.paper",
-        border: "1px solid rgba(156, 163, 175, 0.12)",
+        border: 1,
+        borderColor: "divider",
         borderRadius: 2,
         transition: "all 0.2s ease",
         cursor: "pointer",
         "&:hover": {
           borderColor: "primary.main",
-          transform: "translateY(-2px)",
-          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)",
+          boxShadow: (theme) => `0 0 20px ${theme.palette.action.selected}`,
+          transform: "translateY(-3px)",
         },
       }}
     >
@@ -30,23 +33,14 @@ export default function UpcomingMatchCard({ match }) {
           alignItems="center"
           justifyContent="space-between"
         >
-          <Typography
-            sx={{
-              fontSize: "0.75rem",
-              fontWeight: 800,
-              color: "primary.main",
-              mb: 0.5,
-            }}
-          >
+          <Typography variant="subtitle2" color="primary.main">
             {match.tournament?.name}
           </Typography>
+
           <Typography
-            sx={{
-              fontSize: "0.7rem",
-              fontWeight: 900,
-              color: "primary.main",
-              letterSpacing: "0.08em",
-            }}
+            variant="overline"
+            color="primary.main"
+            sx={{ fontWeight: 900 }}
           >
             ROUND {match.round}
           </Typography>
@@ -54,34 +48,17 @@ export default function UpcomingMatchCard({ match }) {
 
         {/* Teams */}
         <Box>
-          <Typography
-            sx={{
-              fontSize: "1rem",
-              fontWeight: 900,
-            }}
-          >
-            {match.teamA?.name || "TBD"}
-          </Typography>
+          <Typography variant="h6">{match.teamA?.name || "TBD"}</Typography>
 
           <Typography
-            sx={{
-              color: "text.secondary",
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              my: 0.25,
-            }}
+            variant="caption"
+            color="text.secondary"
+            sx={{ fontWeight: 700, display: "block", my: 0.25 }}
           >
             VS
           </Typography>
 
-          <Typography
-            sx={{
-              fontSize: "1rem",
-              fontWeight: 900,
-            }}
-          >
-            {match.teamB?.name || "TBD"}
-          </Typography>
+          <Typography variant="h6">{match.teamB?.name || "TBD"}</Typography>
         </Box>
 
         {/* Date */}
@@ -91,24 +68,15 @@ export default function UpcomingMatchCard({ match }) {
           alignItems="center"
           sx={{
             pt: 1.25,
-            borderTop: "1px solid rgba(156, 163, 175, 0.1)",
+            borderTop: 1,
+            borderColor: "divider",
           }}
         >
-          <ScheduleIcon
-            sx={{
-              fontSize: 17,
-              color: "text.secondary",
-            }}
-          />
+          <ScheduleIcon fontSize="small" color="action" />
 
-          <Typography
-            color="text.secondary"
-            sx={{
-              fontSize: "0.78rem",
-            }}
-          >
+          <Typography variant="body2" color="text.secondary">
             {match.scheduledAt
-              ? new Date(match.scheduledAt).toLocaleString()
+              ? formatDateTime(match.scheduledAt)
               : "Time not scheduled"}
           </Typography>
         </Stack>

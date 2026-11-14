@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box, Card, Typography } from "@mui/material";
 
 const PLACE_LABELS = ["1st Place", "2nd Place", "3rd Place"];
 
-// index: 0 = first place, 1 = second, 2 = third
 export default function PodiumCard({ entry, index }) {
   const isFirst = index === 0;
 
@@ -14,32 +13,27 @@ export default function PodiumCard({ entry, index }) {
   ];
 
   return (
-    <Box
+    <Card
       component={Link}
       href={`/teams/${entry.team._id}`}
       sx={{
         display: "block",
+        p: { xs: 3, md: 4 },
+        textAlign: "center",
         textDecoration: "none",
         color: "inherit",
-        p: { xs: 3, md: 4 },
-        borderRadius: 3,
-        backgroundColor: "background.paper",
-        border: "1px solid",
-        borderColor: isFirst ? "primary.main" : "divider",
-        boxShadow: isFirst ? "0 12px 35px rgba(0, 0, 0, 0.25)" : "none",
-        textAlign: "center",
-        // the first place is a little higher than the others
+        borderColor: isFirst ? "primary.main" : undefined,
+        boxShadow: isFirst ? 8 : undefined,
         transform: { md: isFirst ? "translateY(-18px)" : "none" },
       }}
     >
       <Typography
+        variant="overline"
         sx={{
-          fontSize: "0.75rem",
+          display: "block",
+          mb: 2,
           fontWeight: 800,
           color: isFirst ? "primary.main" : "text.secondary",
-          mb: 2,
-          textTransform: "uppercase",
-          letterSpacing: "0.08em",
         }}
       >
         {PLACE_LABELS[index]}
@@ -62,23 +56,18 @@ export default function PodiumCard({ entry, index }) {
         {entry.team.name.charAt(0).toUpperCase()}
       </Avatar>
 
-      <Typography sx={{ fontSize: "1.15rem", fontWeight: 800, mb: 2 }}>
+      <Typography variant="h6" sx={{ mb: 2 }}>
         {entry.team.name}
       </Typography>
 
-      <Typography
-        sx={{
-          fontSize: "2rem",
-          fontWeight: 900,
-          color: "primary.main",
-          lineHeight: 1,
-        }}
-      >
+      <Typography variant="h4" color="primary.main">
         {entry.points}
       </Typography>
+
       <Typography
+        variant="caption"
         color="text.secondary"
-        sx={{ mt: 0.5, mb: 2, fontSize: "0.75rem" }}
+        sx={{ display: "block", mt: 0.5, mb: 2 }}
       >
         Points
       </Typography>
@@ -87,12 +76,13 @@ export default function PodiumCard({ entry, index }) {
         {stats.map((stat) => (
           <Box key={stat.label}>
             <Typography sx={{ fontWeight: 800 }}>{stat.value}</Typography>
-            <Typography sx={{ fontSize: "0.7rem", color: "text.secondary" }}>
+
+            <Typography variant="caption" color="text.secondary">
               {stat.label}
             </Typography>
           </Box>
         ))}
       </Box>
-    </Box>
+    </Card>
   );
 }

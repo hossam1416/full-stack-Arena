@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Alert,
   Box,
+  Card,
   CircularProgress,
   FormControl,
   InputLabel,
@@ -12,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { apiRequest } from "@/lib/api";
+import PageContainer from "@/components/layout/PageContainer";
 import PodiumCard from "@/components/leaderboard/PodiumCard";
 import RankingRow, {
   RANKING_COLUMNS,
@@ -61,14 +63,7 @@ export default function LeaderboardPage() {
   const others = leaderboard.slice(3);
 
   return (
-    <Box
-      sx={{
-        maxWidth: 1200,
-        mx: "auto",
-        px: { xs: 2, md: 3 },
-        py: { xs: 4, md: 6 },
-      }}
-    >
+    <PageContainer maxWidth="lg">
       {/* header + game filter */}
       <Box
         sx={{
@@ -81,10 +76,7 @@ export default function LeaderboardPage() {
         }}
       >
         <Box>
-          <Typography
-            variant="h3"
-            sx={{ fontWeight: 900, mb: 1, letterSpacing: "-0.03em" }}
-          >
+          <Typography variant="h3" gutterBottom>
             Leaderboard
           </Typography>
           <Typography color="text.secondary">
@@ -143,7 +135,7 @@ export default function LeaderboardPage() {
       {/* rank 4 and below */}
       {others.length > 0 && (
         <Box sx={{ mt: 6 }}>
-          <Typography variant="h5" sx={{ fontWeight: 800, mb: 2.5 }}>
+          <Typography variant="h5" sx={{ mb: 2.5 }}>
             Rankings
           </Typography>
 
@@ -174,26 +166,13 @@ export default function LeaderboardPage() {
             )}
           </Box>
 
-          <Box
-            sx={{
-              border: "1px solid",
-              borderColor: "divider",
-              borderRadius: 3,
-              overflow: "hidden",
-              backgroundColor: "background.paper",
-            }}
-          >
+          <Card>
             {others.map((entry, index) => (
-              <RankingRow
-                key={entry.team._id}
-                entry={entry}
-                rank={index + 4}
-                isLast={index === others.length - 1}
-              />
+              <RankingRow key={entry.team._id} entry={entry} rank={index + 4} />
             ))}
-          </Box>
+          </Card>
         </Box>
       )}
-    </Box>
+    </PageContainer>
   );
 }

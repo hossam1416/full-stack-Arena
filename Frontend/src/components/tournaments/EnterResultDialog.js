@@ -62,7 +62,7 @@ export default function EnterResultDialog({ match, onClose, onSubmitted }) {
             type="number"
             value={scoreA}
             onChange={(event) => setScoreA(event.target.value)}
-            inputProps={{ min: 0 }}
+            slotProps={{ htmlInput: { min: 0 } }}
             fullWidth
           />
           <TextField
@@ -70,7 +70,7 @@ export default function EnterResultDialog({ match, onClose, onSubmitted }) {
             type="number"
             value={scoreB}
             onChange={(event) => setScoreB(event.target.value)}
-            inputProps={{ min: 0 }}
+            slotProps={{ htmlInput: { min: 0 } }}
             fullWidth
           />
         </Box>

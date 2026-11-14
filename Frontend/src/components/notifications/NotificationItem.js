@@ -1,6 +1,7 @@
 "use client";
 
-import { Box, Typography } from "@mui/material";
+import { Avatar, Box, Card, Typography } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { useRouter } from "next/navigation";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
@@ -47,9 +48,10 @@ const getLink = ({ type, metadata }) => {
 // onClose is only used by the bell menu in the header
 export default function NotificationItem({ notification, onRead, onClose }) {
   const router = useRouter();
+  const unread = !notification.read;
 
   const handleClick = () => {
-    if (!notification.read) {
+    if (unread) {
       onRead(notification._id);
     }
 
@@ -60,66 +62,44 @@ export default function NotificationItem({ notification, onRead, onClose }) {
   };
 
   return (
-    <Box
+    <Card
       onClick={handleClick}
-      sx={{
+      sx={(theme) => ({
         p: 2,
-        borderRadius: 2,
         cursor: "pointer",
-        backgroundColor: notification.read
-          ? "background.paper"
-          : "rgba(220, 38, 38, 0.08)",
-        border: "1px solid",
-        borderColor: notification.read ? "divider" : "rgba(220, 38, 38, 0.3)",
         transition: "all 0.2s ease",
+        ...(unread && {
+          backgroundColor: "action.selected",
+          borderColor: alpha(theme.palette.primary.main, 0.3),
+        }),
         "&:hover": {
-          backgroundColor: notification.read
-            ? "rgba(156, 163, 175, 0.05)"
-            : "rgba(220, 38, 38, 0.12)",
+          backgroundColor: unread
+            ? alpha(theme.palette.primary.main, 0.16)
+            : "action.hover",
         },
-      }}
+      })}
     >
       <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5 }}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 40,
-            height: 40,
-            flexShrink: 0,
-            borderRadius: "50%",
-            color: "primary.main",
-            backgroundColor: "rgba(220, 38, 38, 0.1)",
-          }}
-        >
+        <Avatar sx={{ bgcolor: "action.selected", color: "primary.main" }}>
           {ICONS[notification.type] || <GroupsIcon />}
-        </Box>
+        </Avatar>
 
         <Box
           sx={{ display: "flex", flexDirection: "column", gap: 0.5, flex: 1 }}
         >
-          <Typography sx={{ fontWeight: 700, fontSize: "0.95rem" }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
             {notification.title}
           </Typography>
 
-          <Typography
-            sx={{
-              fontSize: "0.85rem",
-              color: "text.secondary",
-              lineHeight: 1.5,
-            }}
-          >
+          <Typography variant="body2" color="text.secondary">
             {notification.message}
           </Typography>
 
-          <Typography
-            sx={{ mt: 0.5, fontSize: "0.7rem", color: "text.secondary" }}
-          >
+          <Typography variant="caption" color="text.secondary">
             {new Date(notification.createdAt).toLocaleDateString()}
           </Typography>
         </Box>
       </Box>
-    </Box>
+    </Card>
   );
 }

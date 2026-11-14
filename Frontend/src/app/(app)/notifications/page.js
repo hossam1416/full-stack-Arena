@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useNotifications } from "@/context/NotificationsContext";
+import PageContainer from "@/components/layout/PageContainer";
 import NotificationItem from "@/components/notifications/NotificationItem";
 
 export default function NotificationsPage() {
@@ -21,14 +22,7 @@ export default function NotificationsPage() {
   } = useNotifications();
 
   return (
-    <Box
-      sx={{
-        maxWidth: 1000,
-        mx: "auto",
-        px: { xs: 2, md: 3 },
-        py: { xs: 3, md: 5 },
-      }}
-    >
+    <PageContainer maxWidth="md">
       {/* header */}
       <Box
         sx={{
@@ -40,7 +34,7 @@ export default function NotificationsPage() {
         }}
       >
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5 }}>
+          <Typography variant="h4" gutterBottom>
             Notifications
           </Typography>
           <Typography color="text.secondary">
@@ -76,6 +70,6 @@ export default function NotificationsPage() {
           />
         ))}
       </Box>
-    </Box>
+    </PageContainer>
   );
 }

@@ -20,21 +20,12 @@ export default function TeamFilter({
         placeholder="Search teams..."
         value={search}
         onChange={(event) => onSearchChange(event.target.value)}
-        sx={{
-          flex: 1,
-          "& .MuiOutlinedInput-root": {
-            backgroundColor: "background.paper",
-          },
-        }}
       />
 
       <Select
         value={selectedGame}
         onChange={(event) => onGameChange(event.target.value)}
-        sx={{
-          width: { xs: "100%", md: 240 },
-          backgroundColor: "background.paper",
-        }}
+        sx={{ width: { xs: "100%", md: 240 } }}
       >
         <MenuItem value="all">All Games</MenuItem>
         {games.map((game) => (

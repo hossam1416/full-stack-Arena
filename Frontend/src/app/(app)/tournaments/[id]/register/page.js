@@ -3,19 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Stack,
-  Typography,
-} from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Alert, Box, Button, Stack, Typography } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import GroupsIcon from "@mui/icons-material/Groups";
 import { apiRequest } from "@/lib/api";
 import { getRegistrationState } from "@/lib/tournamentHelpers";
+import PageContainer from "@/components/layout/PageContainer";
+import BackButton from "@/components/common/BackButton";
+import { LoadingState, MessageState } from "@/components/common/PageState";
 import TeamPicker from "@/components/tournaments/TeamPicker";
 import PlayerPicker from "@/components/tournaments/PlayerPicker";
 
@@ -68,11 +63,15 @@ export default function TournamentRegisterPage() {
 
   // select or unselect a player (never more than requiredPlayers)
   const handleTogglePlayer = (playerId) => {
-    if (selectedPlayers.includes(playerId)) {
-      setSelectedPlayers(selectedPlayers.filter((item) => item !== playerId));
-    } else if (selectedPlayers.length < requiredPlayers) {
-      setSelectedPlayers([...selectedPlayers, playerId]);
-    }
+    setSelectedPlayers((current) => {
+      if (current.includes(playerId)) {
+        return current.filter((item) => item !== playerId);
+      }
+      if (current.length < requiredPlayers) {
+        return [...current, playerId];
+      }
+      return current;
+    });
   };
 
   const handleRegister = async () => {
@@ -98,62 +97,42 @@ export default function TournamentRegisterPage() {
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          minHeight: "60vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <CircularProgress color="primary" />
-      </Box>
+      <PageContainer maxWidth="lg">
+        <LoadingState />
+      </PageContainer>
     );
   }
 
   if (loadError) {
     return (
-      <Box
-        sx={{
-          maxWidth: 1200,
-          mx: "auto",
-          px: { xs: 2, md: 4 },
-          py: { xs: 4, md: 6 },
-        }}
-      >
-        <Alert severity="error">{loadError}</Alert>
-      </Box>
+      <PageContainer maxWidth="lg">
+        <MessageState error text={loadError} />
+      </PageContainer>
     );
   }
 
   // success message
   if (registered) {
     return (
-      <Box
-        sx={{
-          maxWidth: 1200,
-          mx: "auto",
-          px: { xs: 2, md: 4 },
-          py: { xs: 4, md: 6 },
-          textAlign: "center",
-        }}
-      >
-        <CheckCircleIcon color="primary" sx={{ fontSize: 64 }} />
-        <Typography variant="h4" fontWeight={800} sx={{ mt: 2 }}>
-          Registration Successful
-        </Typography>
-        <Typography color="text.secondary" sx={{ mt: 1, mb: 3 }}>
-          Your team <strong>{selectedTeam.name}</strong> is registered for{" "}
-          {tournament.name}.
-        </Typography>
-        <Button
-          component={Link}
-          href={`/tournaments/${id}`}
-          variant="contained"
-        >
-          Go to tournament
-        </Button>
-      </Box>
+      <PageContainer maxWidth="lg">
+        <Box sx={{ textAlign: "center" }}>
+          <CheckCircleIcon color="primary" sx={{ fontSize: 64 }} />
+          <Typography variant="h4" sx={{ mt: 2 }}>
+            Registration Successful
+          </Typography>
+          <Typography color="text.secondary" sx={{ mt: 1, mb: 3 }}>
+            Your team <strong>{selectedTeam.name}</strong> is registered for{" "}
+            {tournament.name}.
+          </Typography>
+          <Button
+            component={Link}
+            href={`/tournaments/${id}`}
+            variant="contained"
+          >
+            Go to tournament
+          </Button>
+        </Box>
+      </PageContainer>
     );
   }
 
@@ -161,51 +140,28 @@ export default function TournamentRegisterPage() {
   const registration = getRegistrationState(tournament);
   if (!registration.open) {
     return (
-      <Box
-        sx={{
-          maxWidth: 1200,
-          mx: "auto",
-          px: { xs: 2, md: 4 },
-          py: { xs: 4, md: 6 },
-        }}
-      >
+      <PageContainer maxWidth="lg">
         <Alert severity="info" sx={{ mb: 3 }}>
           {registration.label}: this tournament does not accept new teams.
         </Alert>
-        <Button component={Link} href={`/tournaments/${id}`}>
-          Back to tournament
-        </Button>
-      </Box>
+        <BackButton href={`/tournaments/${id}`}>BACK TO TOURNAMENT</BackButton>
+      </PageContainer>
     );
   }
 
   // ids of the teams that are already in the tournament
   const registeredIds = (tournament.registrations || []).map(
-    (registration) => registration.team?._id,
+    (entry) => entry.team?._id,
   );
 
   return (
-    <Box
-      sx={{
-        maxWidth: 1200,
-        mx: "auto",
-        px: { xs: 2, md: 4 },
-        py: { xs: 4, md: 6 },
-      }}
-    >
-      <Button
-        component={Link}
-        href={`/tournaments/${id}`}
-        startIcon={<ArrowBackIcon />}
-        sx={{ mb: 3, color: "text.secondary" }}
-      >
-        BACK TO TOURNAMENT
-      </Button>
+    <PageContainer maxWidth="lg">
+      <BackButton href={`/tournaments/${id}`}>BACK TO TOURNAMENT</BackButton>
 
       <Typography
         variant="h3"
-        fontWeight={800}
-        sx={{ mb: 1.5, fontSize: { xs: "1.9rem", md: "2.6rem" } }}
+        gutterBottom
+        sx={{ fontSize: { xs: "1.9rem", md: "2.6rem" } }}
       >
         Register for{" "}
         <Box component="span" sx={{ color: "primary.main" }}>
@@ -217,11 +173,9 @@ export default function TournamentRegisterPage() {
       </Typography>
 
       {/* team */}
-      <Stack direction="row" alignItems="center" spacing={1.5} mb={3}>
+      <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 3 }}>
         <GroupsIcon color="primary" />
-        <Typography variant="h5" fontWeight={800}>
-          Select Your Team
-        </Typography>
+        <Typography variant="h5">Select Your Team</Typography>
       </Stack>
 
       {teams.length === 0 ? (
@@ -268,12 +222,12 @@ export default function TournamentRegisterPage() {
             size="large"
             disabled={submitting || selectedPlayers.length !== requiredPlayers}
             onClick={handleRegister}
-            sx={{ mt: 4, py: 1.6, fontWeight: 800 }}
+            sx={{ mt: 4 }}
           >
             {submitting ? "Registering..." : "Register Team"}
           </Button>
         </Box>
       )}
-    </Box>
+    </PageContainer>
   );
 }
