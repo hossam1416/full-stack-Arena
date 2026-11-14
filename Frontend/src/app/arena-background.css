@@ -1,0 +1,128 @@
+.arena-background {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  background: #08090e;
+}
+
+/* Dark Mode - Angular Neon */
+.arena-background::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      135deg,
+      transparent 0 12%,
+      rgba(229, 57, 53, 0.12) 12.05%,
+      #ff3038 12.15%,
+      rgba(255, 48, 56, 0.15) 12.3%,
+      transparent 12.5%
+    ),
+    linear-gradient(
+      45deg,
+      transparent 0 83%,
+      rgba(229, 57, 53, 0.15) 83.1%,
+      #ff2635 83.2%,
+      transparent 83.35%
+    ),
+    linear-gradient(
+      45deg,
+      transparent 0 22%,
+      rgba(255, 40, 50, 0.7) 22.1%,
+      transparent 22.25%
+    ),
+    linear-gradient(
+      135deg,
+      transparent 0 87%,
+      rgba(255, 40, 50, 0.8) 87.1%,
+      transparent 87.25%
+    );
+
+  opacity: 0.85;
+}
+
+.arena-background::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    radial-gradient(ellipse at 0% 35%, rgba(229, 35, 48, 0.2), transparent 32%),
+    radial-gradient(
+      ellipse at 100% 70%,
+      rgba(229, 35, 48, 0.18),
+      transparent 32%
+    ),
+    radial-gradient(ellipse at 50% 0%, rgba(229, 35, 48, 0.08), transparent 40%);
+
+  animation: neonAmbient 6s ease-in-out infinite alternate;
+}
+
+.arena-background > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes neonAmbient {
+  from {
+    opacity: 0.65;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Light Mode */
+[data-theme="light"] .arena-background {
+  background: #ecebe8;
+}
+[data-theme="light"] .arena-background::before {
+  opacity: 0.18;
+  background:
+    linear-gradient(
+      135deg,
+      transparent 0 12%,
+      rgba(211, 47, 47, 0.06) 12.05%,
+      rgba(211, 47, 47, 0.45) 12.15%,
+      rgba(211, 47, 47, 0.06) 12.3%,
+      transparent 12.5%
+    ),
+    linear-gradient(
+      45deg,
+      transparent 0 83%,
+      rgba(211, 47, 47, 0.45) 83.2%,
+      transparent 83.35%
+    ),
+    linear-gradient(
+      45deg,
+      transparent 0 22%,
+      rgba(211, 47, 47, 0.3) 22.1%,
+      transparent 22.25%
+    ),
+    linear-gradient(
+      135deg,
+      transparent 0 87%,
+      rgba(211, 47, 47, 0.35) 87.1%,
+      transparent 87.25%
+    );
+}
+[data-theme="light"] .arena-background::after {
+  background:
+    radial-gradient(
+      ellipse at 0% 35%,
+      rgba(211, 47, 47, 0.06),
+      transparent 32%
+    ),
+    radial-gradient(
+      ellipse at 100% 70%,
+      rgba(211, 47, 47, 0.05),
+      transparent 32%
+    ),
+    radial-gradient(ellipse at 50% 0%, rgba(211, 47, 47, 0.03), transparent 40%);
+}

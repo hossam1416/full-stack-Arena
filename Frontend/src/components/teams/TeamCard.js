@@ -1,136 +1,123 @@
 "use client";
 
 import Link from "next/link";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  Chip,
+  Divider,
+  Stack,
+  Typography,
+} from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import Banner from "@/components/common/Banner";
+
+// the chips on top of the banner: always dark, because the banner is dark
+const bannerChipSx = {
+  position: "absolute",
+  top: 14,
+  color: "#fff",
+  fontWeight: 700,
+  bgcolor: "rgba(15, 18, 25, 0.85)",
+  border: "1px solid rgba(255, 255, 255, 0.12)",
+  backdropFilter: "blur(8px)",
+  "& .MuiChip-icon": { color: "inherit" },
+};
 
 export default function TeamCard({ team }) {
+  const memberCount = team.members?.length || 0;
+  const captain = team.captain;
+
   return (
-    <Box
+    <Card
+      variant="interactive"
       sx={{
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "background.paper",
-        border: "1px solid rgba(156, 163, 175, 0.12)",
-        borderRadius: 2,
-        overflow: "hidden",
-        transition: "all 0.3s ease",
-        "&:hover": {
-          borderColor: "rgba(220, 38, 38, 0.35)",
-          boxShadow: "0 0 20px rgba(220, 38, 38, 0.08)",
-          transform: "translateY(-4px)",
-          "& .team-banner": {
-            transform: "scale(1.05)",
-          },
-        },
+        "&:hover .banner-image": { transform: "scale(1.06)" },
       }}
     >
-      <Box sx={{ height: 140, overflow: "hidden", position: "relative" }}>
-        <Box
-          className="team-banner"
-          sx={{
-            height: "100%",
-            width: "100%",
-            position: "absolute",
-            inset: 0,
-            transition: "transform 0.4s ease",
-            backgroundImage: team.banner
-              ? `url(${team.banner})`
-              : "linear-gradient(135deg, #1A1616 0%, #0C0A0A 100%)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
+      <Banner src={team.banner} height={165} overlay>
+        <Chip
+          label={team.game?.name || "Unknown Game"}
+          size="small"
+          sx={{ ...bannerChipSx, left: 14 }}
         />
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            zIndex: 1,
-            background:
-              "linear-gradient(to bottom, rgba(12,10,10,0.05), rgba(12,10,10,0.85))",
-          }}
+        <Chip
+          icon={<GroupsOutlinedIcon />}
+          label={memberCount}
+          size="small"
+          sx={{ ...bannerChipSx, right: 14 }}
         />
-
-        {!team.banner && (
-          <Typography
-            sx={{
-              position: "absolute",
-              inset: 0,
-              zIndex: 2,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "rgba(255,255,255,0.08)",
-              fontSize: "2rem",
-              fontWeight: 900,
-              letterSpacing: "0.08em",
-            }}
-          >
-            ARENA
-          </Typography>
-        )}
-      </Box>
-
-      <Box
-        sx={{
-          p: 2.5,
-          display: "flex",
-          flexDirection: "column",
-          flex: 1,
-        }}
-      >
         <Typography
+          variant="h6"
           sx={{
-            fontSize: "1.1rem",
-            fontWeight: 900,
+            position: "absolute",
+            bottom: 16,
+            left: 18,
+            right: 18,
+            color: "#fff",
+            textShadow: "0 2px 8px rgba(0, 0, 0, 0.5)",
           }}
         >
           {team.name}
         </Typography>
+      </Banner>
 
+      <Box sx={{ p: 2.5, display: "flex", flexDirection: "column", flex: 1 }}>
         <Typography
-          color="primary.main"
-          sx={{
-            mt: 0.5,
-            fontSize: "0.75rem",
-            fontWeight: 700,
-          }}
+          variant="overline"
+          color="text.secondary"
+          sx={{ display: "block", mb: 1 }}
         >
-          {team.game?.name || "Unknown Game"}
+          TEAM LEADER
         </Typography>
 
-        <Stack spacing={0.5} sx={{ mt: 2 }}>
-          <Typography color="text.secondary" sx={{ fontSize: "0.8rem" }}>
-            Captain: {team.captain?.username || "Unknown"}
-          </Typography>
+        <Card sx={{ p: 1.5, bgcolor: "action.hover" }}>
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <Avatar
+              sx={{
+                width: 42,
+                height: 42,
+                bgcolor: "primary.main",
+                color: "primary.contrastText",
+                fontWeight: 800,
+              }}
+            >
+              {captain?.username?.charAt(0).toUpperCase() || "?"}
+            </Avatar>
 
-          <Typography color="text.secondary" sx={{ fontSize: "0.8rem" }}>
-            {team.members?.length || 0} Members
-          </Typography>
-        </Stack>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography variant="subtitle2" noWrap sx={{ fontWeight: 800 }}>
+                {captain?.username || "Unknown"}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Team Captain
+              </Typography>
+            </Box>
+
+            <WorkspacePremiumIcon color="warning" />
+          </Stack>
+        </Card>
+
+        <Divider sx={{ my: 2 }} />
 
         <Button
           component={Link}
           href={`/teams/${team._id}`}
-          variant="outlined"
+          variant="contained"
           fullWidth
           endIcon={<ArrowForwardIcon />}
-          sx={{
-            mt: "auto",
-            pt: 1,
-            fontWeight: 800,
-            borderColor: "rgba(156, 163, 175, 0.3)",
-            color: "text.primary",
-            "&:hover": {
-              borderColor: "primary.main",
-              backgroundColor: "rgba(220, 38, 38, 0.05)",
-            },
-          }}
+          sx={{ mt: "auto" }}
         >
           VIEW TEAM
         </Button>
       </Box>
-    </Box>
+    </Card>
   );
 }

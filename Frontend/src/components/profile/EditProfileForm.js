@@ -5,7 +5,7 @@ import {
   Alert,
   Box,
   Button,
-  Paper,
+  Card,
   Stack,
   TextField,
   Typography,
@@ -61,17 +61,8 @@ export default function EditProfileForm({ user, games, onSaved, onCancel }) {
   };
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: 4,
-        mb: 4,
-        border: "1px solid",
-        borderColor: "divider",
-        borderRadius: 4,
-      }}
-    >
-      <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
+    <Card sx={{ p: 4, mb: 4 }}>
+      <Typography variant="h6" sx={{ mb: 3 }}>
         Edit Profile
       </Typography>
 
@@ -109,7 +100,7 @@ export default function EditProfileForm({ user, games, onSaved, onCancel }) {
         />
 
         <Box>
-          <Typography variant="subtitle2" fontWeight={600} mb={1.5}>
+          <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
             Favorite Games
           </Typography>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -141,6 +132,6 @@ export default function EditProfileForm({ user, games, onSaved, onCancel }) {
           </Button>
         </Stack>
       </Stack>
-    </Paper>
+    </Card>
   );
 }

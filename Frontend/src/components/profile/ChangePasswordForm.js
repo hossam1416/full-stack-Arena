@@ -4,7 +4,7 @@ import { useState } from "react";
 import {
   Alert,
   Button,
-  Paper,
+  Card,
   Stack,
   TextField,
   Typography,
@@ -55,17 +55,8 @@ export default function ChangePasswordForm({ onDone, onCancel }) {
   };
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: 4,
-        mb: 4,
-        border: "1px solid",
-        borderColor: "divider",
-        borderRadius: 4,
-      }}
-    >
-      <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>
+    <Card sx={{ p: 4, mb: 4 }}>
+      <Typography variant="h6" sx={{ mb: 3 }}>
         Change Password
       </Typography>
 
@@ -114,6 +105,6 @@ export default function ChangePasswordForm({ onDone, onCancel }) {
           </Button>
         </Stack>
       </Stack>
-    </Paper>
+    </Card>
   );
 }

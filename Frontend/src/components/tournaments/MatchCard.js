@@ -1,25 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Avatar, Box, Button, Card, Stack, Typography } from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { useAuth } from "@/context/AuthContext";
 import EnterResultDialog from "./EnterResultDialog";
 
-// colors come from the theme
+// theme color names, named by their role
 const COLORS = {
-  white: "text.primary",
-  gray: "text.secondary",
-  darkGray: "text.disabled",
-  red: "primary.main",
+  primary: "text.primary",
+  secondary: "text.secondary",
+  disabled: "text.disabled",
+  accent: "primary.main",
 };
 
-// Text shown on the right side of the card header
+// Text shown on the right side of the card header.
+// ("scheduled" is not here: it shows the match time, rendered separately.)
 const STATUS_TEXT = {
-  bye: { label: "BYE", color: COLORS.red },
-  pending: { label: "PENDING", color: COLORS.darkGray },
-  completed: { label: "COMPLETED", color: COLORS.white },
+  bye: { label: "BYE", color: COLORS.accent },
+  pending: { label: "PENDING", color: COLORS.disabled },
+  completed: { label: "COMPLETED", color: COLORS.primary },
 };
+
+// small bold text used in the card header
+const labelSx = { fontWeight: 800, letterSpacing: "0.06em" };
 
 function getStatus(match) {
   const hasBothTeams = match.teamA && match.teamB;
@@ -32,75 +36,68 @@ function getStatus(match) {
   return null;
 }
 
-function TeamRow({ team, score, isWinner, withBorder }) {
-  const color = isWinner ? COLORS.white : team ? COLORS.gray : COLORS.darkGray;
+function TeamRow({ team, score, isWinner, withBorder, isLoser }) {
+  const color = isWinner
+    ? COLORS.primary
+    : isLoser
+      ? COLORS.disabled
+      : team
+        ? COLORS.secondary
+        : COLORS.disabled;
 
   return (
-    <Box
+    <Stack
+      direction="row"
+      alignItems="center"
+      justifyContent="space-between"
       sx={{
         px: 2,
         py: 1.5,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderBottom: withBorder
-          ? "1px solid rgba(156, 163, 175, 0.08)"
-          : "none",
+        borderBottom: withBorder ? 1 : 0,
+        borderColor: "divider",
+        opacity: isLoser ? 0.35 : 1,
+        filter: isLoser ? "grayscale(1)" : "none",
+        transition: "all 0.5s ease",
       }}
     >
-      <Box
-        sx={{ display: "flex", alignItems: "center", gap: 1.25, minWidth: 0 }}
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={1.25}
+        sx={{ minWidth: 0 }}
       >
-        {team ? (
-          <Box
-            component="img"
-            src={team.logo || "/placeholder-team.png"}
-            alt={team.name}
-            sx={{
-              width: 28,
-              height: 28,
-              objectFit: "cover",
-              borderRadius: 0.75,
-              flexShrink: 0,
-            }}
-          />
-        ) : (
-          <Box
-            sx={{
-              width: 28,
-              height: 28,
-              borderRadius: 0.75,
-              backgroundColor: "rgba(156, 163, 175, 0.08)",
-              flexShrink: 0,
-            }}
-          />
-        )}
-
-        <Typography
+        <Avatar
+          variant="rounded"
+          src={team?.logo || undefined}
+          alt={team?.name}
           sx={{
-            fontWeight: isWinner ? 900 : 700,
+            width: 28,
+            height: 28,
+            borderRadius: 0.75,
+            fontSize: "0.75rem",
+            fontWeight: 800,
+            bgcolor: "action.hover",
             color,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
           }}
         >
+          {team?.name?.charAt(0).toUpperCase() ?? ""}
+        </Avatar>
+
+        <Typography noWrap sx={{ fontWeight: isWinner ? 900 : 700, color }}>
           {team?.name || "TBD"}
         </Typography>
 
         {isWinner && (
-          <Typography
-            sx={{ color: COLORS.red, fontWeight: 900, fontSize: "0.9rem" }}
-          >
+          <Typography color="primary" sx={{ fontWeight: 900 }}>
             ✓
           </Typography>
         )}
-      </Box>
+      </Stack>
 
       <Typography sx={{ ml: 2, fontWeight: 900, color }}>
         {team ? (score ?? "-") : "-"}
       </Typography>
-    </Box>
+    </Stack>
   );
 }
 
@@ -121,54 +118,27 @@ export default function MatchCard({ match, onResultSubmitted }) {
     match.teamB;
 
   return (
-    <Box
-      sx={{
-        width: 300,
-        backgroundColor: "background.paper",
-        border: "1px solid rgba(156, 163, 175, 0.18)",
-        borderRadius: 1.5,
-        overflow: "hidden",
-      }}
-    >
+    <Card sx={{ width: 300, borderRadius: 1.5 }}>
       {/* header: match number + status */}
-      <Box
-        sx={{
-          px: 2,
-          py: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          borderBottom: "1px solid rgba(156, 163, 175, 0.12)",
-        }}
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ px: 2, py: 1, borderBottom: 1, borderColor: "divider" }}
       >
-        <Typography
-          sx={{
-            fontSize: "0.7rem",
-            fontWeight: 800,
-            color: COLORS.gray,
-            letterSpacing: "0.08em",
-          }}
-        >
+        <Typography variant="caption" color={COLORS.secondary} sx={labelSx}>
           MATCH {match.matchNumber}
         </Typography>
 
         {status === "scheduled" && (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.5,
-              color: COLORS.gray,
-            }}
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={0.5}
+            sx={{ color: COLORS.secondary }}
           >
             <AccessTimeIcon sx={{ fontSize: 14 }} />
-            <Typography
-              sx={{
-                fontSize: "0.65rem",
-                fontWeight: 800,
-                letterSpacing: "0.04em",
-              }}
-            >
+            <Typography variant="caption" sx={labelSx}>
               {match.scheduledAt
                 ? new Date(match.scheduledAt).toLocaleString([], {
                     month: "short",
@@ -178,33 +148,33 @@ export default function MatchCard({ match, onResultSubmitted }) {
                   })
                 : "UPCOMING"}
             </Typography>
-          </Box>
+          </Stack>
         )}
 
         {STATUS_TEXT[status] && (
           <Typography
-            sx={{
-              fontSize: "0.65rem",
-              fontWeight: 900,
-              color: STATUS_TEXT[status].color,
-              letterSpacing: "0.06em",
-            }}
+            variant="caption"
+            color={STATUS_TEXT[status].color}
+            sx={labelSx}
           >
             {STATUS_TEXT[status].label}
           </Typography>
         )}
-      </Box>
+      </Stack>
 
       <TeamRow
         team={match.teamA}
         score={match.score?.teamA}
         isWinner={teamAWon}
+        isLoser={isCompleted && match.teamA && !teamAWon}
         withBorder
       />
+
       <TeamRow
         team={match.teamB}
         score={match.score?.teamB}
         isWinner={teamBWon}
+        isLoser={isCompleted && match.teamB && !teamBWon}
       />
 
       {canEnterResult && (
@@ -226,18 +196,16 @@ export default function MatchCard({ match, onResultSubmitted }) {
           sx={{
             px: 2,
             py: 1,
-            borderTop: "1px solid rgba(156, 163, 175, 0.08)",
-            backgroundColor: "rgba(220, 38, 38, 0.04)",
+            borderTop: 1,
+            borderColor: "divider",
+            bgcolor: "action.selected",
           }}
         >
           <Typography
-            sx={{
-              fontSize: "0.65rem",
-              fontWeight: 800,
-              color: COLORS.red,
-              letterSpacing: "0.05em",
-              textAlign: "center",
-            }}
+            variant="caption"
+            color={COLORS.accent}
+            align="center"
+            sx={{ ...labelSx, display: "block" }}
           >
             ADVANCED BY BYE
           </Typography>
@@ -251,10 +219,10 @@ export default function MatchCard({ match, onResultSubmitted }) {
           onClose={() => setResultOpen(false)}
           onSubmitted={() => {
             setResultOpen(false);
-            onResultSubmitted();
+            onResultSubmitted(match._id);
           }}
         />
       )}
-    </Box>
+    </Card>
   );
 }

@@ -1,31 +1,47 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Avatar, Box, Button, Stack, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  Chip,
+  Stack,
+  Typography,
+} from "@mui/material";
+
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 
 export default function TeamCard({ team }) {
   const router = useRouter();
 
+  const members = team.members || [];
+
   return (
-    <Box
+    <Card
       sx={{
         overflow: "hidden",
-        border: "1px solid rgba(156, 163, 175, 0.12)",
-        borderRadius: 2,
-        backgroundColor: "rgba(12, 10, 10, 0.35)",
+        transition: "all 0.25s ease",
+        "&:hover": {
+          borderColor: "primary.main",
+          transform: "translateY(-4px)",
+          boxShadow: (theme) => `0 10px 30px ${theme.palette.action.selected}`,
+        },
       }}
     >
       {/* Team Banner */}
       <Box
         sx={{
-          height: 90,
+          height: 125,
+          position: "relative",
           backgroundImage: team.banner
             ? `url(${team.banner})`
-            : "linear-gradient(135deg, #1A1616 0%, #0C0A0A 100%)",
+            : "linear-gradient(135deg, #252B36, #11151D)",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          position: "relative",
         }}
       >
         <Box
@@ -33,132 +49,149 @@ export default function TeamCard({ team }) {
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(to bottom, rgba(12,10,10,0.05), rgba(12,10,10,0.8))",
+              "linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.85))",
           }}
         />
 
-        {!team.banner && (
+        {/* Game Badge */}
+        <Chip
+          label={team.game?.name || "Unknown Game"}
+          size="small"
+          sx={{
+            position: "absolute",
+            top: 12,
+            left: 12,
+            bgcolor: "rgba(0,0,0,0.65)",
+            color: "#fff",
+            fontWeight: 700,
+            backdropFilter: "blur(8px)",
+          }}
+        />
+
+        {/* Members Count */}
+        <Chip
+          icon={<GroupsOutlinedIcon />}
+          label={`${members.length} Members`}
+          size="small"
+          sx={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            bgcolor: "rgba(0,0,0,0.65)",
+            color: "#fff",
+            "& .MuiChip-icon": {
+              color: "#fff",
+            },
+            backdropFilter: "blur(8px)",
+          }}
+        />
+
+        {/* Team Name */}
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: 14,
+            left: 16,
+            right: 16,
+          }}
+        >
           <Typography
+            variant="h6"
             sx={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "rgba(255,255,255,0.08)",
-              fontSize: "1.5rem",
-              fontWeight: 900,
-              letterSpacing: "0.08em",
+              color: "#fff",
+              textShadow: "0 2px 8px rgba(0,0,0,0.5)",
             }}
           >
-            ARENA
+            {team.name}
           </Typography>
-        )}
+        </Box>
       </Box>
 
+      {/* Team Content */}
       <Box sx={{ p: 2 }}>
+        {/* Roster Header */}
         <Stack
           direction="row"
           alignItems="center"
           justifyContent="space-between"
           sx={{ mb: 1.5 }}
         >
-          <Box>
-            <Typography
-              sx={{
-                fontSize: "1rem",
-                fontWeight: 900,
-              }}
-            >
-              {team.name}
-            </Typography>
-
-            <Typography
-              color="text.secondary"
-              sx={{
-                fontSize: "0.75rem",
-                mt: 0.25,
-              }}
-            >
-              {team.game?.name || "Unknown Game"}
-            </Typography>
-          </Box>
-
           <Typography
+            variant="overline"
             color="text.secondary"
-            sx={{
-              fontSize: "0.7rem",
-            }}
+            sx={{ fontWeight: 800 }}
           >
-            {team.members?.length || 0} members
+            TEAM ROSTER
+          </Typography>
+
+          <Typography variant="caption" color="text.secondary">
+            {members.length} / 5
           </Typography>
         </Stack>
 
+        {/* Members */}
         <Stack spacing={1}>
-          {team.members?.map((member) => (
-            <Stack
-              key={member._id}
-              direction="row"
-              alignItems="center"
-              spacing={1.25}
-            >
-              <Avatar
+          {members.map((member) => {
+            const isCaptain = member._id === team.captain?._id;
+
+            return (
+              <Stack
+                key={member._id}
+                direction="row"
+                alignItems="center"
+                spacing={1.25}
                 sx={{
-                  width: 30,
-                  height: 30,
-                  backgroundColor: "rgba(220, 38, 38, 0.18)",
-                  color: "text.primary",
-                  fontSize: "0.75rem",
-                  fontWeight: 800,
+                  p: 1,
+                  borderRadius: 2,
+                  bgcolor: "action.hover",
+                  border: 1,
+                  borderColor: "divider",
                 }}
               >
-                {member.username.charAt(0).toUpperCase()}
-              </Avatar>
-
-              <Box sx={{ flex: 1 }}>
-                <Typography
+                <Avatar
                   sx={{
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
+                    width: 34,
+                    height: 34,
+                    bgcolor: isCaptain ? "primary.main" : "action.selected",
+                    color: isCaptain ? "#fff" : "text.primary",
+                    fontWeight: 800,
                   }}
                 >
-                  {member.username}
-                </Typography>
+                  {member.username?.charAt(0).toUpperCase() || "?"}
+                </Avatar>
 
-                {member._id === team.captain?._id && (
-                  <Typography
-                    color="primary.main"
-                    sx={{
-                      fontSize: "0.65rem",
-                      fontWeight: 700,
-                    }}
-                  >
-                    Captain
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography variant="body2" fontWeight={700} noWrap>
+                    {member.username}
                   </Typography>
+
+                  <Typography variant="caption" color="text.secondary">
+                    {isCaptain ? "Team Captain" : "Team Member"}
+                  </Typography>
+                </Box>
+
+                {isCaptain && (
+                  <WorkspacePremiumOutlinedIcon
+                    color="warning"
+                    fontSize="small"
+                  />
                 )}
-              </Box>
-            </Stack>
-          ))}
+              </Stack>
+            );
+          })}
         </Stack>
 
+        {/* View Team */}
         <Button
           fullWidth
-          variant="outlined"
+          variant="contained"
           endIcon={<ArrowForwardIcon />}
           onClick={() => router.push(`/teams/${team._id}`)}
-          sx={{
-            mt: 2,
-            borderColor: "rgba(156, 163, 175, 0.3)",
-            color: "text.primary",
-            "&:hover": {
-              borderColor: "primary.main",
-              backgroundColor: "rgba(220, 38, 38, 0.05)",
-            },
-          }}
+          sx={{ mt: 2, py: 1, borderRadius: 2 }}
         >
           VIEW TEAM
         </Button>
       </Box>
-    </Box>
+    </Card>
   );
 }

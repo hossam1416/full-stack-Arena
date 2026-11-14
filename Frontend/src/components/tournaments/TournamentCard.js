@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   Chip,
+  Stack,
   Typography,
 } from "@mui/material";
 import {
@@ -12,34 +13,17 @@ import {
   getPrizePool,
   STATUS_COLORS,
 } from "@/lib/tournamentHelpers";
-
-const formatDate = (date) => new Date(date).toLocaleDateString();
+import { formatDate } from "@/lib/formatDate";
+import Banner from "@/components/common/Banner";
+import InfoItem from "@/components/common/InfoItem";
 
 export default function TournamentCard({ tournament }) {
   return (
     <Card
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        border: "1px solid",
-        borderColor: "divider",
-        transition: "0.2s ease",
-        "&:hover": {
-          transform: "translateY(-4px)",
-          borderColor: "primary.main",
-        },
-      }}
+      variant="interactive"
+      sx={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
-      <Box
-        component="img"
-        src={
-          tournament.banner ||
-          "https://placehold.co/800x450/18181b/ffffff?text=Tournament"
-        }
-        alt={tournament.name}
-        sx={{ width: "100%", height: 200, objectFit: "cover" }}
-      />
+      <Banner src={tournament.banner} height={200} />
 
       <CardContent
         sx={{ display: "flex", flexDirection: "column", flexGrow: 1, gap: 2 }}
@@ -52,7 +36,7 @@ export default function TournamentCard({ tournament }) {
             sx={{ mb: 1.5 }}
           />
 
-          <Typography variant="h5" sx={{ fontWeight: 800, mb: 0.5 }}>
+          <Typography variant="h5" gutterBottom>
             {tournament.name}
           </Typography>
 
@@ -61,50 +45,29 @@ export default function TournamentCard({ tournament }) {
           </Typography>
         </Box>
 
-        <Box>
-          <Typography variant="body2" color="text.secondary">
-            Starts
-          </Typography>
-          <Typography fontWeight={600}>
-            {formatDate(tournament.startDate)}
-          </Typography>
-        </Box>
+        <InfoItem label="Starts" value={formatDate(tournament.startDate)} />
+        <InfoItem
+          label="Registration closes"
+          value={formatDate(tournament.registrationDeadline)}
+        />
 
-        <Box>
-          <Typography variant="body2" color="text.secondary">
-            Registration closes
-          </Typography>
-          <Typography fontWeight={600}>
-            {formatDate(tournament.registrationDeadline)}
-          </Typography>
-        </Box>
-
-        <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}>
-          <Box>
-            <Typography variant="body2" color="text.secondary">
-              Teams
-            </Typography>
-            <Typography fontWeight={700}>
-              {tournament.registrationCount} / {tournament.maxTeams}
-            </Typography>
-          </Box>
-
-          <Box>
-            <Typography variant="body2" color="text.secondary">
-              Prize Pool
-            </Typography>
-            <Typography fontWeight={700}>
-              ${getPrizePool(tournament).toLocaleString()}
-            </Typography>
-          </Box>
-        </Box>
+        <Stack direction="row" justifyContent="space-between" gap={2}>
+          <InfoItem
+            label="Teams"
+            value={`${tournament.registrationCount} / ${tournament.maxTeams}`}
+          />
+          <InfoItem
+            label="Prize Pool"
+            value={`$${getPrizePool(tournament).toLocaleString()}`}
+          />
+        </Stack>
 
         <Button
           component={Link}
           href={`/tournaments/${tournament._id}`}
           variant="contained"
           fullWidth
-          sx={{ mt: "auto", fontWeight: 700 }}
+          sx={{ mt: "auto" }}
         >
           View Tournament
         </Button>

@@ -1,25 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import {
   Alert,
-  Box,
   Button,
-  CircularProgress,
-  Container,
-  Paper,
+  Card,
   Snackbar,
   Stack,
   Typography,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { alpha } from "@mui/material/styles";
 import SecurityIcon from "@mui/icons-material/Security";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuth } from "@/context/AuthContext";
 import { apiRequest } from "@/lib/api";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
+import BackButton from "@/components/common/BackButton";
+import Section from "@/components/common/Section";
+import { LoadingState, MessageState } from "@/components/common/PageState";
+import PageContainer from "@/components/layout/PageContainer";
 import TeamHeader from "@/components/teams/TeamHeader";
 import TeamSettingsForm from "@/components/teams/TeamSettingsForm";
 import RosterList from "@/components/teams/RosterList";
@@ -50,14 +50,6 @@ const CONFIRM_CONFIG = {
   },
 };
 
-const centerScreen = {
-  minHeight: "calc(100vh - 72px)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  backgroundColor: "background.default",
-};
-
 export default function ManageTeamPage() {
   const { id } = useParams();
   const router = useRouter();
@@ -69,10 +61,12 @@ export default function ManageTeamPage() {
   const [fetchError, setFetchError] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const reload = () => setRefreshTrigger((key) => key + 1);
+
   // message at the bottom
   const [message, setMessage] = useState("");
   const [actionError, setActionError] = useState("");
   const [processingId, setProcessingId] = useState(null);
+
   // confirmation dialog
   const [confirmAction, setConfirmAction] = useState(null);
   const [confirming, setConfirming] = useState(false);
@@ -93,7 +87,7 @@ export default function ManageTeamPage() {
         } else {
           router.replace(`/teams/${id}`); // not the captain
         }
-      } catch (err) {
+      } catch {
         setFetchError(true);
       } finally {
         setLoading(false);
@@ -163,19 +157,17 @@ export default function ManageTeamPage() {
 
   if (loading) {
     return (
-      <Box sx={centerScreen}>
-        <CircularProgress color="primary" />
-      </Box>
+      <PageContainer>
+        <LoadingState />
+      </PageContainer>
     );
   }
 
   if (fetchError || !team) {
     return (
-      <Box sx={centerScreen}>
-        <Typography color="error">
-          Failed to load team. Please try again.
-        </Typography>
-      </Box>
+      <PageContainer>
+        <MessageState error text="Failed to load team. Please try again." />
+      </PageContainer>
     );
   }
 
@@ -187,114 +179,95 @@ export default function ManageTeamPage() {
     : null;
 
   return (
-    <Box
-      sx={{
-        minHeight: "calc(100vh - 72px)",
-        backgroundColor: "background.default",
-        py: { xs: 3, md: 5 },
-      }}
-    >
-      <Container maxWidth="lg">
-        <Button
-          component={Link}
-          href={`/teams/${id}`}
-          startIcon={<ArrowBackIcon />}
-          sx={{ mb: 3, color: "text.secondary" }}
+    <PageContainer maxWidth="lg">
+      <BackButton href={`/teams/${id}`}>BACK TO TEAM</BackButton>
+
+      {actionError && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {actionError}
+        </Alert>
+      )}
+
+      <TeamHeader team={team}>
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          color="text.secondary"
         >
-          BACK TO TEAM
-        </Button>
+          <SecurityIcon fontSize="small" />
+          <Typography variant="body2" sx={{ fontWeight: 700 }}>
+            TEAM CAPTAIN
+          </Typography>
+        </Stack>
+      </TeamHeader>
 
-        {actionError && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {actionError}
-          </Alert>
-        )}
+      <TeamSettingsForm
+        team={team}
+        onSaved={() => {
+          setMessage("Team updated");
+          reload();
+        }}
+      />
 
-        <TeamHeader team={team}>
-          <Stack
-            direction="row"
-            spacing={1}
-            alignItems="center"
-            color="text.secondary"
-          >
-            <SecurityIcon fontSize="small" />
-            <Typography sx={{ fontSize: "0.8rem", fontWeight: 700 }}>
-              TEAM CAPTAIN
-            </Typography>
-          </Stack>
-        </TeamHeader>
-
-        <TeamSettingsForm
-          team={team}
-          onSaved={() => {
-            setMessage("Team updated");
-            reload();
-          }}
-        />
-
+      <Section title={`ROSTER MANAGEMENT (${team.members?.length || 0})`}>
         <RosterList
           team={team}
           onRemove={(member) => openConfirm("remove", member)}
           onTransfer={(member) => openConfirm("transfer", member)}
         />
+      </Section>
 
+      <Section title="JOIN REQUESTS">
         <JoinRequestsList
           requests={joinRequests}
           processingId={processingId}
           onAccept={(requestId) => handleRequest(requestId, "accept")}
           onReject={(requestId) => handleRequest(requestId, "reject")}
         />
+      </Section>
 
-        {/* a team can only be deleted when the captain is the only member */}
-        {team.members?.length === 1 && (
-          <Paper
-            elevation={0}
-            sx={{
-              mt: 5,
-              p: { xs: 3, md: 4 },
-              border: "1px solid rgba(239, 68, 68, 0.2)",
-              borderRadius: 3,
-            }}
+      {/* a team can only be deleted when the captain is the only member */}
+      {team.members?.length === 1 && (
+        <Card
+          sx={(theme) => ({
+            p: { xs: 3, md: 4 },
+            borderColor: alpha(theme.palette.error.main, 0.3),
+          })}
+        >
+          <Typography variant="h6">DELETE TEAM</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5 }}>
+            Permanently delete this team and all of its pending join requests.
+          </Typography>
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={() => openConfirm("delete")}
           >
-            <Typography variant="h6" sx={{ fontWeight: 900 }}>
-              DELETE TEAM
-            </Typography>
-            <Typography
-              color="text.secondary"
-              sx={{ mb: 2.5, fontSize: "0.9rem" }}
-            >
-              Permanently delete this team and all of its pending join requests.
-            </Typography>
-            <Button
-              variant="outlined"
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={() => openConfirm("delete")}
-            >
-              DELETE TEAM
-            </Button>
-          </Paper>
-        )}
+            DELETE TEAM
+          </Button>
+        </Card>
+      )}
 
-        <ConfirmDialog
-          open={Boolean(confirmAction)}
-          title={confirmConfig?.title}
-          message={confirmConfig?.getMessage(confirmAction.member)}
-          confirmText={confirmConfig?.confirmText}
-          confirmColor={confirmConfig?.confirmColor}
-          loading={confirming}
-          error={confirmError}
-          onConfirm={handleConfirm}
-          onClose={() => setConfirmAction(null)}
-        />
+      <ConfirmDialog
+        open={Boolean(confirmAction)}
+        title={confirmConfig?.title}
+        message={confirmConfig?.getMessage(confirmAction.member)}
+        confirmText={confirmConfig?.confirmText}
+        confirmColor={confirmConfig?.confirmColor}
+        loading={confirming}
+        error={confirmError}
+        onConfirm={handleConfirm}
+        onClose={() => setConfirmAction(null)}
+      />
 
-        <Snackbar
-          open={Boolean(message)}
-          autoHideDuration={3000}
-          onClose={() => setMessage("")}
-          message={message}
-        />
-      </Container>
-    </Box>
+      <Snackbar
+        open={Boolean(message)}
+        autoHideDuration={3000}
+        onClose={() => setMessage("")}
+        message={message}
+      />
+    </PageContainer>
   );
 }

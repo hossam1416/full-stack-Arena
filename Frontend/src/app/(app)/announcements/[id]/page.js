@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Box, Button, Typography } from "@mui/material";
 import { apiRequest } from "@/lib/api";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PageContainer from "@/components/layout/PageContainer";
 
 export default function AnnouncementDetailsPage() {
   const { id } = useParams();
@@ -30,130 +31,114 @@ export default function AnnouncementDetailsPage() {
   }, [id]);
 
   if (loading) {
-    return <Box sx={{ p: 4 }}>Loading...</Box>;
+    return (
+      <PageContainer>
+        <Typography color="text.secondary">Loading...</Typography>
+      </PageContainer>
+    );
   }
 
   if (!announcement) {
     return (
-      <Box sx={{ p: 4 }}>
-        <Typography>Announcement not found.</Typography>
-      </Box>
+      <PageContainer>
+        <Typography color="text.secondary">Announcement not found.</Typography>
+      </PageContainer>
     );
   }
 
   return (
-    <Box
-      sx={{
-        maxWidth: 1100,
-        mx: "auto",
-        px: { xs: 2, md: 3 },
-        py: { xs: 3, md: 5 },
-      }}
-    >
-      <Button
-        component={Link}
-        href="/announcements"
-        startIcon={<ArrowBackIcon />}
-        sx={{
-          mb: 3,
-          color: "text.secondary",
-          "&:hover": {
-            color: "primary.main",
-          },
-        }}
-      >
-        BACK TO ANNOUNCEMENTS
-      </Button>
-      {/* Hero */}
-      <Box
-        sx={{
-          position: "relative",
-          height: { xs: 300, md: 450 },
-          borderRadius: 3,
-          overflow: "hidden",
-          backgroundImage: announcement.image
-            ? `url(${announcement.image})`
-            : "linear-gradient(135deg, #1A1616 0%, #0C0A0A 100%)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <Box
+    <PageContainer>
+      <Box sx={{ maxWidth: 1100, mx: "auto" }}>
+        <Button
+          component={Link}
+          href="/announcements"
+          startIcon={<ArrowBackIcon />}
+          color="inherit"
           sx={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.1) 100%)",
-          }}
-        />
-
-        {/* Hero Content */}
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            p: { xs: 3, md: 5 },
+            mb: 3,
+            color: "text.secondary",
+            "&:hover": {
+              color: "primary.main",
+            },
           }}
         >
-          <Typography
-            sx={{
-              fontSize: "0.7rem",
-              fontWeight: 800,
-              letterSpacing: 1.5,
-              color: "primary.main",
-              mb: 1,
-            }}
-          >
-            ANNOUNCEMENT
-          </Typography>
+          BACK TO ANNOUNCEMENTS
+        </Button>
 
-          <Typography
+        {/* Hero */}
+        <Box
+          sx={{
+            position: "relative",
+            height: { xs: 300, md: 450 },
+            borderRadius: 3,
+            overflow: "hidden",
+            backgroundImage: announcement.image
+              ? `url(${announcement.image})`
+              : "linear-gradient(135deg, #1A1616 0%, #0C0A0A 100%)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <Box
             sx={{
-              fontSize: {
-                xs: "1.8rem",
-                md: "2.8rem",
-              },
-              fontWeight: 900,
-              lineHeight: 1.15,
-              color: "#fff",
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.1) 100%)",
             }}
-          >
-            {announcement.title}
-          </Typography>
+          />
 
-          <Typography
+          <Box
             sx={{
-              mt: 1.5,
-              fontSize: "0.8rem",
-              color: "rgba(255,255,255,0.65)",
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              p: { xs: 3, md: 5 },
             }}
           >
-            {new Date(announcement.createdAt).toLocaleDateString()}
+            <Typography
+              variant="overline"
+              color="primary.main"
+              sx={{ fontWeight: 800, letterSpacing: 1.5 }}
+            >
+              ANNOUNCEMENT
+            </Typography>
+
+            <Typography
+              variant="h3"
+              sx={{
+                color: "#fff",
+                fontSize: { xs: "1.8rem", md: "2.8rem" },
+                lineHeight: 1.15,
+              }}
+            >
+              {announcement.title}
+            </Typography>
+
+            <Typography
+              variant="caption"
+              sx={{ mt: 1.5, color: "rgba(255,255,255,0.65)" }}
+            >
+              {new Date(announcement.createdAt).toLocaleDateString()}
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Content */}
+        <Box sx={{ mt: 4, maxWidth: 850 }}>
+          <Typography
+            sx={{
+              lineHeight: 1.9,
+              color: "text.secondary",
+              whiteSpace: "pre-line",
+            }}
+          >
+            {announcement.content}
           </Typography>
         </Box>
       </Box>
-
-      {/* Content */}
-      <Box
-        sx={{
-          mt: 4,
-          maxWidth: 850,
-        }}
-      >
-        <Typography
-          sx={{
-            fontSize: "1rem",
-            lineHeight: 1.9,
-            color: "text.secondary",
-            whiteSpace: "pre-line",
-          }}
-        >
-          {announcement.content}
-        </Typography>
-      </Box>
-    </Box>
+    </PageContainer>
   );
 }
